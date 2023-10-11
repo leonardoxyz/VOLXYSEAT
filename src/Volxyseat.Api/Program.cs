@@ -18,7 +18,6 @@ builder.Services.AddDbContext<ApplicationDataContext>(opts =>
 
 builder.Services.AddScoped<IRepository<Client, Guid>, ClientRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 builder.Services.AddScoped<ClientService>();
 
 if (builder.Environment.IsDevelopment())

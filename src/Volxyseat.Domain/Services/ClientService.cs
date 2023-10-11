@@ -44,11 +44,11 @@ namespace Volxyseat.Domain.Services
                 return null; // Cliente não encontrado
             }
 
-            // Atualize os campos do cliente existente com os valores do cliente
-            // que foi passado como parâmetro.
-            existingClient.Nome = client.Nome; // Exemplo de campo para atualização
+            existingClient.Nome = client.Nome;
+            existingClient.Email = client.Email;
+            existingClient.CPF = client.CPF;
 
-            _clientRepository.UpdateAsync(existingClient);
+            await _clientRepository.UpdateAsync(existingClient);
             await _unitOfWork.SaveChangesAsync();
             return existingClient;
         }
@@ -57,7 +57,7 @@ namespace Volxyseat.Domain.Services
         {
             await _clientRepository.DeleteAsync(id);
             await _unitOfWork.SaveChangesAsync();
-            return true; // Supondo que a exclusão tenha sido bem-sucedida
+            return true; // exclusão bem-sucedida
         }
     }
 }

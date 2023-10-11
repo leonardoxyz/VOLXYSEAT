@@ -9,7 +9,6 @@ namespace Volxyseat.Api.Controllers
     public class ClientController : ControllerBase
     {
         private readonly ClientService _clientService;
-
         public ClientController(ClientService clientService)
         {
             _clientService = clientService;
