@@ -23,18 +23,15 @@ namespace Volxyseat.Api.Handlers
 
             if (existingClient == null)
             {
-                // Se o cliente não existir, você pode lançar uma exceção ou retornar null, dependendo da lógica do seu aplicativo.
-                // Exemplo: throw new EntityNotFoundException("Cliente não encontrado");
                 return null;
             }
-
-            // Atualize os campos do cliente com base na solicitação.
+            //adicionar as props da model
             existingClient.Name = request.Name;
             existingClient.Email = request.Email;
             existingClient.Cpf = request.Cpf;
             existingClient.Phone = request.Phone;
 
-            // Salve as alterações no banco de dados.
+            //atualizar e salvar com a unity
             await _clientRepository.UpdateAsync(existingClient);
             await _unitOfWork.SaveChangesAsync();
 

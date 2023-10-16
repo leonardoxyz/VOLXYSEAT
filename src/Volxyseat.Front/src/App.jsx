@@ -32,11 +32,16 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!client.name || !client.email || !client.cpf || !client.phone) {
+      toast.info("Antes de prosseguirmos, preencha todos os campos!");
+      return;
+    }
+
     try {
       if (isEditing) {
         //put
         await axios.put(`${apiUrl}/${editingClientId}`, client);
-        toast.success("Cliente editado com sucesso!");
+        toast.info("Cliente editado com sucesso!");
       } else {
         //post
         await axios.post(apiUrl, client);
@@ -45,8 +50,6 @@ function App() {
 
       const response = await axios.get(apiUrl);
       setClients(response.data);
-
-      // Limpe os campos de entrada
       setClient({ name: "", cpf: "", email: "", phone: "" });
 
       setIsEditing(false);
@@ -85,19 +88,19 @@ function App() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="Name">Nome:</label>
-            <input type="text" id="Name" name="name" value={client.name} onChange={handleInputChange} required />
+            <input type="text" id="Name" name="name" value={client.name} onChange={handleInputChange} />
           </div>
           <div className="form-group">
             <label htmlFor="Email">Email:</label>
-            <input type="email" id="Email" name="email" value={client.email} onChange={handleInputChange} required />
+            <input type="email" id="Email" name="email" value={client.email} onChange={handleInputChange} />
           </div>
           <div className="form-group">
             <label htmlFor="Cpf">Cpf:</label>
-            <input type="text" id="Cpf" name="cpf" value={client.cpf} onChange={handleInputChange} required />
+            <input type="text" id="Cpf" name="cpf" value={client.cpf} onChange={handleInputChange} />
           </div>
           <div className="form-group">
             <label htmlFor="Phone">Telefone:</label>
-            <input type="text" id="Phone" name="phone" value={client.phone} onChange={handleInputChange} required />
+            <input type="text" id="Phone" name="phone" value={client.phone} onChange={handleInputChange} />
           </div>
           <button type="submit" className="cta-button">
             {isEditing ? "Salvar Edição" : "Cadastrar Cliente"}
