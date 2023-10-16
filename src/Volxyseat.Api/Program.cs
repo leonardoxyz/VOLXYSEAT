@@ -1,12 +1,20 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
+using Volxyseat.Api.Handlers;
 using Volxyseat.Domain.Core.Data;
 using Volxyseat.Domain.Models.ClientModel;
 using Volxyseat.Domain.Services;
 using Volxyseat.Infrastructure.Data;
 using Volxyseat.Infrastructure.Repository;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using System.Reflection;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +27,8 @@ builder.Services.AddDbContext<ApplicationDataContext>(opts =>
 builder.Services.AddScoped<IRepository<Client, Guid>, ClientRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ClientService>();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
 
 if (builder.Environment.IsDevelopment())
 {
@@ -31,6 +41,15 @@ if (builder.Environment.IsDevelopment())
 
     builder.Services.AddEndpointsApiExplorer();
 }
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -46,6 +65,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("AllowSpecificOrigin");
+
+app.UseAuthentication();
 
 app.MapControllers();
 

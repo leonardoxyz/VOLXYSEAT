@@ -1,0 +1,44 @@
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
+using Volxyseat.Domain.Models.ClientModel;
+using Volxyseat.Domain.Core.Data;
+
+namespace Volxyseat.Api.Handlers
+{
+    public class UpdateClientHandler : IRequestHandler<UpdateClientRequest, Client>
+    {
+        private readonly IRepository<Client, Guid> _clientRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UpdateClientHandler(IRepository<Client, Guid> clientRepository, IUnitOfWork unitOfWork)
+        {
+            _clientRepository = clientRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<Client> Handle(UpdateClientRequest request, CancellationToken cancellationToken)
+        {
+            var existingClient = await _clientRepository.GetByIdAsync(request.Id);
+
+            if (existingClient == null)
+            {
+                // Se o cliente não existir, você pode lançar uma exceção ou retornar null, dependendo da lógica do seu aplicativo.
+                // Exemplo: throw new EntityNotFoundException("Cliente não encontrado");
+                return null;
+            }
+
+            // Atualize os campos do cliente com base na solicitação.
+            existingClient.Name = request.Name;
+            existingClient.Email = request.Email;
+            existingClient.Cpf = request.Cpf;
+            existingClient.Phone = request.Phone;
+
+            // Salve as alterações no banco de dados.
+            await _clientRepository.UpdateAsync(existingClient);
+            await _unitOfWork.SaveChangesAsync();
+
+            return existingClient;
+        }
+    }
+}

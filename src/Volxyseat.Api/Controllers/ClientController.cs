@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Volxyseat.Domain.Models.ClientModel;
 using Volxyseat.Domain.Services;
 
@@ -9,9 +10,11 @@ namespace Volxyseat.Api.Controllers
     public class ClientController : ControllerBase
     {
         private readonly ClientService _clientService;
-        public ClientController(ClientService clientService)
+        private readonly IMediator _mediator;
+        public ClientController(ClientService clientService, IMediator mediator)
         {
             _clientService = clientService;
+            _mediator = mediator;
         }
 
         [HttpPost]
@@ -40,13 +43,17 @@ namespace Volxyseat.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateClient(Guid id, Client client)
+        public async Task<ActionResult<Client>> UpdateClientAsync(Guid id, [FromBody] UpdateClientRequest request)
         {
-            var updatedClient = await _clientService.UpdateClientAsync(id, client);
+            request.Id = id;
+
+            var updatedClient = await _mediator.Send(request);
+
             if (updatedClient == null)
             {
                 return NotFound();
             }
+
             return Ok(updatedClient);
         }
 

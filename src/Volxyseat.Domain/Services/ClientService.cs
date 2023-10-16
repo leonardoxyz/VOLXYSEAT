@@ -44,9 +44,10 @@ namespace Volxyseat.Domain.Services
                 return null; // Cliente não encontrado
             }
 
-            existingClient.Nome = client.Nome;
+            existingClient.Name = client.Name;
             existingClient.Email = client.Email;
-            existingClient.CPF = client.CPF;
+            existingClient.Cpf = client.Cpf;
+            existingClient.Phone = client.Phone;
 
             await _clientRepository.UpdateAsync(existingClient);
             await _unitOfWork.SaveChangesAsync();
@@ -59,5 +60,7 @@ namespace Volxyseat.Domain.Services
             await _unitOfWork.SaveChangesAsync();
             return true; // exclusão bem-sucedida
         }
+
+
     }
 }
